@@ -10,7 +10,7 @@
     "build:parser": "node generate.js",
     "build:ts": "tsc",
     "build:browser": "node build-browser.js",
-    "copy:public": "cp contextfree.js cfdg.js public/",
+    "copy:public": "node copy-to-public.js",
     "clean": "rm -rf dist",
     "prebuild": "npm run clean",
     "dev": "vite",
