@@ -7,6 +7,26 @@ Almost compatible with Context Free 2.x, but tile directive and path directive a
 
 See [demo](http://alpico.la/contextfree.js/).
 
+## Live Editor
+
+A modern React-based live editor with dark mode and 10 example patterns is now available!
+
+To run the editor:
+
+    npm install
+    npm run dev
+
+Then open http://localhost:5173/ in your browser.
+
+Features:
+- 🎨 10 curated CFDG examples (fractals, spirals, geometric patterns)
+- ⚡ Live rendering as you type
+- 🌙 Beautiful dark mode theme
+- 📊 Performance metrics
+- 🎯 Clear error messages
+
+See [editor/README.md](editor/README.md) for more details.
+
 ## TypeScript Architecture
 
 This package has been ported to TypeScript with a modular architecture for better maintainability and extensibility:
@@ -39,7 +59,10 @@ This will:
 - `npm run build:parser` - Generate parser only
 - `npm run build:ts` - Compile TypeScript only
 - `npm run build:browser` - Create browser bundle only
+- `npm run build:editor` - Build live editor for production
 - `npm run clean` - Remove build artifacts
+- `npm run dev` - Start live editor development server
+- `npm run preview` - Preview production build of editor
 
 Usage
 -----
