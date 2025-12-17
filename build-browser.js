@@ -47,13 +47,25 @@ let bundleCode = `/**
 // Read each module and wrap it
 modules.forEach(modulePath => {
   const fullPath = path.join(distDir, modulePath);
-  const moduleCode = fs.readFileSync(fullPath, 'utf8');
+  let moduleCode = fs.readFileSync(fullPath, 'utf8');
   
   // Remove source map comments
-  const cleanCode = moduleCode.replace(/\/\/# sourceMappingURL=.*/g, '');
+  moduleCode = moduleCode.replace(/\/\/# sourceMappingURL=.*/g, '');
   
   // Extract the module name (without .js)
   const moduleName = './' + modulePath.replace(/\.js$/, '');
+  
+  // Fix require paths to match our module names
+  // Handle requires from modules/ subdirectory
+  if (modulePath.startsWith('modules/')) {
+    moduleCode = moduleCode.replace(/require\("\.\/adjustment"\)/g, 'require("./modules/adjustment")');
+    moduleCode = moduleCode.replace(/require\("\.\/compiler"\)/g, 'require("./modules/compiler")');
+    moduleCode = moduleCode.replace(/require\("\.\/expansion"\)/g, 'require("./modules/expansion")');
+    moduleCode = moduleCode.replace(/require\("\.\/renderer"\)/g, 'require("./modules/renderer")');
+  }
+  moduleCode = moduleCode.replace(/require\("\.\.\/types\//g, 'require("./types/');
+  moduleCode = moduleCode.replace(/require\("\.\.\/modules\//g, 'require("./modules/');
+  moduleCode = moduleCode.replace(/require\("\.\.\/utils\//g, 'require("./utils/');
   
   bundleCode += `  // Module: ${moduleName}\n`;
   bundleCode += `  modules['${moduleName}'] = (function() {\n`;
@@ -61,7 +73,7 @@ modules.forEach(modulePath => {
   bundleCode += `    var module = { exports: exports };\n`;
   
   // Add the module code with indentation
-  const lines = cleanCode.split('\n');
+  const lines = moduleCode.split('\n');
   lines.forEach(line => {
     // Skip "use strict" as we already have it
     if (line.trim() === '"use strict";' || line.trim() === "'use strict';") {

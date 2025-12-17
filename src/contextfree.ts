@@ -132,14 +132,14 @@ export class ContextFree {
   private parseSource(source: string): void {
     CFDG.yy.rand_static = Math.random();
     const statements = CFDG.parse(source);
+    
+    let startshapeName: string | null = null;
 
     statements.forEach((statement) => {
       switch (statement[0]) {
         case 'STARTSHAPE':
-          this.startshape = compileReplacement.call(
-            this as any as CompilerContext,
-            ['REPLACEMENT', statement[1], ['ADJUSTMENTS', []]]
-          );
+          // Store the startshape name for later compilation (after all rules are registered)
+          startshapeName = statement[1];
           break;
 
         case 'BACKGROUND':
@@ -188,6 +188,14 @@ export class ContextFree {
           break;
       }
     });
+    
+    // Compile the startshape after all rules have been registered
+    if (startshapeName) {
+      this.startshape = compileReplacement.call(
+        this as any as CompilerContext,
+        ['REPLACEMENT', startshapeName, ['ADJUSTMENTS', []]]
+      );
+    }
   }
 
   /**

@@ -194,7 +194,7 @@
     exports.compileReplacement = compileReplacement;
     exports.compileReplacements = compileReplacements;
     exports.compilePath = compilePath;
-    const adjustment_1 = require("./adjustment");
+    const adjustment_1 = require("./modules/adjustment");
     /**
      * Compile adjustment statements into executable form
      * @param adjustments - Array of adjustments from parser
@@ -465,8 +465,8 @@
     exports.drawShape = drawShape;
     exports.stop = stop;
     exports.initializeCanvas = initializeCanvas;
-    const color_1 = require("../utils/color");
-    const expansion_1 = require("./expansion");
+    const color_1 = require("./utils/color");
+    const expansion_1 = require("./modules/expansion");
     /**
      * Draw all generated shapes to the canvas
      */
@@ -636,10 +636,12 @@
         parseSource(source) {
             CFDG.yy.rand_static = Math.random();
             const statements = CFDG.parse(source);
+            let startshapeName = null;
             statements.forEach((statement) => {
                 switch (statement[0]) {
                     case 'STARTSHAPE':
-                        this.startshape = compiler_1.compileReplacement.call(this, ['REPLACEMENT', statement[1], ['ADJUSTMENTS', []]]);
+                        // Store the startshape name for later compilation (after all rules are registered)
+                        startshapeName = statement[1];
                         break;
                     case 'BACKGROUND':
                         const adjustment = compiler_1.compileAdjustment.call(this, statement[1]);
@@ -679,6 +681,10 @@
                         break;
                 }
             });
+            // Compile the startshape after all rules have been registered
+            if (startshapeName) {
+                this.startshape = compiler_1.compileReplacement.call(this, ['REPLACEMENT', startshapeName, ['ADJUSTMENTS', []]]);
+            }
         }
         /**
          * Compile rules into executable functions
