@@ -6,10 +6,11 @@
   "types": "dist/contextfree.d.ts",
   "type": "commonjs",
   "scripts": {
-    "build": "npm run build:parser && npm run build:ts && npm run build:browser",
+    "build": "npm run build:parser && npm run build:ts && npm run build:browser && npm run copy:public",
     "build:parser": "node generate.js",
     "build:ts": "tsc",
     "build:browser": "node build-browser.js",
+    "copy:public": "cp contextfree.js cfdg.js public/",
     "clean": "rm -rf dist",
     "prebuild": "npm run clean",
     "dev": "vite",
