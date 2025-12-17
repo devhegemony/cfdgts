@@ -2,10 +2,16 @@
   "name": "cfdgts",
   "version": "0.1.1",
   "description": "JavaScript Implementation of Context Free using Chevrotain parser",
-  "main": "contextfree.js",
+  "main": "dist/contextfree.js",
+  "types": "dist/contextfree.d.ts",
   "type": "commonjs",
   "scripts": {
-    "build": "node generate.js"
+    "build": "npm run build:parser && npm run build:ts && npm run build:browser",
+    "build:parser": "node generate.js",
+    "build:ts": "tsc",
+    "build:browser": "node build-browser.js",
+    "clean": "rm -rf dist",
+    "prebuild": "npm run clean"
   },
   "keywords": [
     "contextfree",
@@ -16,5 +22,8 @@
   "license": "MIT",
   "dependencies": {
     "chevrotain": "^11.0.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0"
   }
 }
