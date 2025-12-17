@@ -114,6 +114,7 @@ class ContextFree {
     rules: { [key: string]: Rule[] } = {};
     primitives: { [key: string]: () => void };
     background?: Color;
+    startshapeName?: string;
     startshape?: ReplacementFunction;
     callback?: (() => void) | null;
     intervalID?: number | null;
@@ -151,9 +152,7 @@ class ContextFree {
         CFDG.parse(source).forEach((statement: Statement) => {
             switch (statement[0]) {
                 case 'STARTSHAPE':
-                    this.startshape = this.compileReplacement([
-                        'REPLACEMENT', statement[1], ['ADJUSTMENTS', []]
-                    ]);
+                    this.startshapeName = statement[1];
                     break;
                 case 'BACKGROUND':
                     const adjustment = this.compileAdjustment(statement[1]);
@@ -274,7 +273,11 @@ class ContextFree {
             );
         }
 
-        if (!this.startshape) {
+        if (this.startshapeName) {
+            this.startshape = this.compileReplacement([
+                'REPLACEMENT', this.startshapeName, ['ADJUSTMENTS', []]
+            ]);
+        } else {
             throw new Error('startshape is not defined');
         }
     }

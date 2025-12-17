@@ -60,9 +60,7 @@ var ContextFree = (function () {
             CFDG.parse(source).forEach(function (statement) {
                 switch (statement[0]) {
                     case 'STARTSHAPE':
-                        _this.startshape = _this.compileReplacement([
-                            'REPLACEMENT', statement[1], ['ADJUSTMENTS', []]
-                        ]);
+                        _this.startshapeName = statement[1];
                         break;
                     case 'BACKGROUND':
                         var adjustment = _this.compileAdjustment(statement[1]);
@@ -170,7 +168,12 @@ var ContextFree = (function () {
             if (this.clip) {
                 this.scale = Math.min(canvas.width / this.width, canvas.height / this.height);
             }
-            if (!this.startshape) {
+            if (this.startshapeName) {
+                this.startshape = this.compileReplacement([
+                    'REPLACEMENT', this.startshapeName, ['ADJUSTMENTS', []]
+                ]);
+            }
+            else {
                 throw new Error('startshape is not defined');
             }
         }
