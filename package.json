@@ -1,0 +1,20 @@
+{
+  "name": "cfdgts",
+  "version": "0.1.1",
+  "description": "JavaScript Implementation of Context Free using Chevrotain parser",
+  "main": "contextfree.js",
+  "type": "commonjs",
+  "scripts": {
+    "build": "node generate.js"
+  },
+  "keywords": [
+    "contextfree",
+    "graphics",
+    "parser"
+  ],
+  "author": "alpicola",
+  "license": "MIT",
+  "dependencies": {
+    "chevrotain": "^11.0.3"
+  }
+}

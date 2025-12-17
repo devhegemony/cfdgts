@@ -7,6 +7,15 @@ almost compatible with Context Free 2.x, but tile directive and path directive a
 
 see [demo](http://alpico.la/contextfree.js/).
 
+## Parser
+
+The CFDG grammar parser has been refactored to use [Chevrotain](https://github.com/Chevrotain/chevrotain) instead of Jison. To rebuild the parser:
+
+    npm install
+    npm run build
+
+This will generate `cfdg.js` from `cfdg-parser-template.js` using the Chevrotain library.
+
 Usage
 -----
 
