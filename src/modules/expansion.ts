@@ -75,7 +75,7 @@ export function loop(
       callback.call(context);
     } else if (intervalContext.count++ > 3000) {
       window.clearInterval(intervalID);
-      throw new Error('too much shapes');
+      throw new Error('too many shapes');
     }
   }, 30);
 
