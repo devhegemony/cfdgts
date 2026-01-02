@@ -78,7 +78,9 @@ export class ContextFree {
    * Create a new ContextFree instance
    * @param source - CFDG source code
    * @param canvas - HTML canvas element to render to
-   * @param options - Optional configuration
+   * @param options - Optional configuration { maxRenderTime?: number, maxShapes?: number }
+   *                  maxRenderTime: Maximum render time in milliseconds (default: 5000)
+   *                  maxShapes: Maximum number of shapes to render (default: 20000)
    */
   constructor(
     source: string,
