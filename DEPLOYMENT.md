@@ -70,9 +70,9 @@ The deployment uses two key scripts defined in `package.json`:
 
 2. **`start`**: Executed when the container starts on Cloud Run
    ```json
-   "start": "serve dist-editor -l ${PORT:-8080}"
+   "start": "serve dist-editor -l tcp://0.0.0.0:${PORT:-8080}"
    ```
-   This serves the built editor application using the `serve` package. The `PORT` environment variable is automatically provided by Cloud Run.
+   This serves the built editor application using the `serve` package. The `PORT` environment variable is automatically provided by Cloud Run, and the server binds to all network interfaces (0.0.0.0) as required by Cloud Run.
 
 ### Build Process
 

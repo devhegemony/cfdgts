@@ -17,7 +17,7 @@
     "build:editor": "vite build",
     "preview": "vite preview",
     "gcp-build": "npm run build && npm run build:editor",
-    "start": "serve dist-editor --listen ${PORT:-8080}"
+    "start": "serve dist-editor -l tcp://0.0.0.0:${PORT:-8080}"
   },
   "keywords": [
     "contextfree",
