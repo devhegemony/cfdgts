@@ -63,6 +63,12 @@ This will:
 - `npm run clean` - Remove build artifacts
 - `npm run dev` - Start live editor development server
 - `npm run preview` - Preview production build of editor
+- `npm run gcp-build` - Build for Google Cloud Run deployment
+- `npm start` - Start production server (serves built editor)
+
+## Deployment
+
+This application is configured for easy deployment to Google Cloud Run using buildpacks. See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed instructions on deploying to Cloud Run.
 
 Usage
 -----

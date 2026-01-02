@@ -15,7 +15,9 @@
     "prebuild": "npm run clean",
     "dev": "vite",
     "build:editor": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "gcp-build": "npm run build && npm run build:editor",
+    "start": "serve dist-editor -l ${PORT:-8080}"
   },
   "keywords": [
     "contextfree",
@@ -25,7 +27,8 @@
   "author": "alpicola",
   "license": "MIT",
   "dependencies": {
-    "chevrotain": "^11.0.3"
+    "chevrotain": "^11.0.3",
+    "serve": "^14.2.5"
   },
   "devDependencies": {
     "@types/react": "^19.2.7",
