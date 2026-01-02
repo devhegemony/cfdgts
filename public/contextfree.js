@@ -414,15 +414,18 @@
         loop(function () {
             this.stack.pop().call(this);
             return this.stack.length;
-        }.bind(this), drawCallback, this);
+        }.bind(this), drawCallback, this, this.renderStartTime, this.maxRenderTime, this.maxShapes);
     }
     /**
      * Loop function that processes shapes in batches with timing control
      * @param loopFn - Function to call repeatedly
      * @param callback - Callback when loop completes
      * @param context - Context to bind to loop function
+     * @param startTime - Optional start time for timeout check (milliseconds)
+     * @param maxTime - Optional maximum time allowed in milliseconds (default 5000ms)
+     * @param maxShapes - Optional maximum number of shapes allowed (default 20000)
      */
-    function loop(loopFn, callback, context) {
+    function loop(loopFn, callback, context, startTime, maxTime = 5000, maxShapes = 20000) {
         const intervalContext = {
             intervalID: null,
             count: 0
@@ -430,6 +433,7 @@
         if (intervalContext.intervalID) {
             window.clearInterval(intervalContext.intervalID);
         }
+        const renderStartTime = startTime || Date.now();
         const intervalID = window.setInterval(() => {
             let shouldContinue = true;
             const start = Date.now();
@@ -443,9 +447,21 @@
                 window.clearInterval(intervalID);
                 callback.call(context);
             }
-            else if (intervalContext.count++ > 3000) {
-                window.clearInterval(intervalID);
-                throw new Error('too many shapes');
+            else {
+                // Check timeout (default 5 seconds)
+                const elapsed = Date.now() - renderStartTime;
+                if (elapsed >= maxTime) {
+                    window.clearInterval(intervalID);
+                    callback.call(context);
+                    return;
+                }
+                // Check shape count limit (default 20000)
+                if (context.shapes && context.shapes.length >= maxShapes) {
+                    window.clearInterval(intervalID);
+                    callback.call(context);
+                    return;
+                }
+                intervalContext.count++;
             }
         }, 30);
         intervalContext.intervalID = intervalID;
@@ -514,7 +530,7 @@
             shape.render.call(this);
             this.context.restore();
             return this.shapes.length;
-        }.bind(this), () => stop.call(this), this);
+        }.bind(this), () => stop.call(this), this, this.renderStartTime, this.maxRenderTime, this.maxShapes);
     }
     /**
      * Stop the rendering process
@@ -566,8 +582,9 @@
          * Create a new ContextFree instance
          * @param source - CFDG source code
          * @param canvas - HTML canvas element to render to
+         * @param options - Optional configuration
          */
-        constructor(source, canvas) {
+        constructor(source, canvas, options) {
             // Display properties
             this.x = 0;
             this.y = 0;
@@ -589,9 +606,20 @@
             // Timing and control
             this.intervalID = null;
             this.callback = null;
+            // Rendering limits
+            this.maxRenderTime = 5000; // 5 seconds in milliseconds
+            this.maxShapes = 20000; // Maximum number of shapes to render
+            this.renderStartTime = 0; // Track when rendering started
             this.canvas = canvas;
             this.context = canvas.getContext('2d');
             this.scale = Math.min(canvas.width, canvas.height);
+            // Set rendering limits from options if provided
+            if ((options === null || options === void 0 ? void 0 : options.maxRenderTime) !== undefined) {
+                this.maxRenderTime = options.maxRenderTime;
+            }
+            if ((options === null || options === void 0 ? void 0 : options.maxShapes) !== undefined) {
+                this.maxShapes = options.maxShapes;
+            }
             // Initialize primitives
             this.initializePrimitives();
             // Parse and process the source
@@ -759,6 +787,8 @@
          */
         render(callback) {
             this.callback = callback || null;
+            // Track start time for timeout check
+            this.renderStartTime = Date.now();
             // Initialize canvas
             renderer_1.initializeCanvas.call(this, this.background);
             // Start expansion
