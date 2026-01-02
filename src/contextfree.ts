@@ -68,16 +68,36 @@ export class ContextFree {
   // Timing and control
   public intervalID: number | null = null;
   public callback: (() => void) | null = null;
+  
+  // Rendering limits
+  public maxRenderTime: number = 5000; // 5 seconds in milliseconds
+  public maxShapes: number = 20000; // Maximum number of shapes to render
+  public renderStartTime: number = 0; // Track when rendering started
 
   /**
    * Create a new ContextFree instance
    * @param source - CFDG source code
    * @param canvas - HTML canvas element to render to
+   * @param options - Optional configuration { maxRenderTime?: number, maxShapes?: number }
+   *                  maxRenderTime: Maximum render time in milliseconds (default: 5000)
+   *                  maxShapes: Maximum number of shapes to render (default: 20000)
    */
-  constructor(source: string, canvas: HTMLCanvasElement) {
+  constructor(
+    source: string,
+    canvas: HTMLCanvasElement,
+    options?: { maxRenderTime?: number; maxShapes?: number }
+  ) {
     this.canvas = canvas;
     this.context = canvas.getContext('2d')!;
     this.scale = Math.min(canvas.width, canvas.height);
+
+    // Set rendering limits from options if provided
+    if (options?.maxRenderTime !== undefined) {
+      this.maxRenderTime = options.maxRenderTime;
+    }
+    if (options?.maxShapes !== undefined) {
+      this.maxShapes = options.maxShapes;
+    }
 
     // Initialize primitives
     this.initializePrimitives();
@@ -288,6 +308,9 @@ export class ContextFree {
    */
   public render(callback?: () => void): void {
     this.callback = callback || null;
+    
+    // Track start time for timeout check
+    this.renderStartTime = Date.now();
 
     // Initialize canvas
     initializeCanvas.call(this as any as RendererContext, this.background);

@@ -20,6 +20,9 @@ export interface RendererContext {
   y: number;
   intervalID: number | null;
   callback: (() => void) | null;
+  renderStartTime?: number;
+  maxRenderTime?: number;
+  maxShapes?: number;
 }
 
 /**
@@ -74,7 +77,10 @@ export function drawShape(this: RendererContext): void {
       return this.shapes.length;
     }.bind(this),
     () => stop.call(this),
-    this
+    this,
+    this.renderStartTime,
+    this.maxRenderTime,
+    this.maxShapes
   );
 }
 

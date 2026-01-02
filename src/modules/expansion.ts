@@ -8,6 +8,9 @@ export interface ExpansionContext {
   stack: Array<() => void>;
   shapes: any[];
   startshape: ReplacementFunction | null;
+  renderStartTime?: number;
+  maxRenderTime?: number;
+  maxShapes?: number;
 }
 
 /**
@@ -35,7 +38,10 @@ export function expandShape(this: ExpansionContext, drawCallback: () => void): v
       return this.stack.length;
     }.bind(this),
     drawCallback,
-    this
+    this,
+    this.renderStartTime,
+    this.maxRenderTime,
+    this.maxShapes
   );
 }
 
@@ -44,11 +50,17 @@ export function expandShape(this: ExpansionContext, drawCallback: () => void): v
  * @param loopFn - Function to call repeatedly
  * @param callback - Callback when loop completes
  * @param context - Context to bind to loop function
+ * @param startTime - Optional start time for timeout check (milliseconds)
+ * @param maxTime - Optional maximum time allowed in milliseconds (default 5000ms)
+ * @param maxShapes - Optional maximum number of shapes allowed (default 20000)
  */
 export function loop(
   loopFn: () => boolean | number,
   callback: () => void,
-  context: any
+  context: any,
+  startTime?: number,
+  maxTime: number = 5000,
+  maxShapes: number = 20000
 ): void {
   const intervalContext = {
     intervalID: null as number | null,
@@ -58,6 +70,8 @@ export function loop(
   if (intervalContext.intervalID) {
     window.clearInterval(intervalContext.intervalID);
   }
+
+  const renderStartTime = startTime || Date.now();
 
   const intervalID = window.setInterval(() => {
     let shouldContinue: boolean | number = true;
@@ -73,9 +87,23 @@ export function loop(
     if (!shouldContinue) {
       window.clearInterval(intervalID);
       callback.call(context);
-    } else if (intervalContext.count++ > 3000) {
-      window.clearInterval(intervalID);
-      throw new Error('too many shapes');
+    } else {
+      // Check timeout (default 5 seconds)
+      const elapsed = Date.now() - renderStartTime;
+      if (elapsed >= maxTime) {
+        window.clearInterval(intervalID);
+        callback.call(context);
+        return;
+      }
+      
+      // Check shape count limit (default 20000)
+      if (context.shapes && context.shapes.length >= maxShapes) {
+        window.clearInterval(intervalID);
+        callback.call(context);
+        return;
+      }
+      
+      intervalContext.count++;
     }
   }, 30);
 
