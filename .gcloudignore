@@ -13,18 +13,18 @@
 .git
 .gitignore
 
-# Node.js dependencies:
+# Node.js dependencies (will be installed during build):
 node_modules/
 
-# TypeScript source files (we only need the built output)
+# TypeScript source files (only source, not config - configs are needed for build)
 src/
 editor/src/
 
-# Build artifacts that will be regenerated
+# Build artifacts that will be regenerated during gcp-build
 dist/
 public/
 
-# Development and configuration files
+# Development and IDE files
 .vscode/
 .idea/
 *.log
@@ -38,20 +38,10 @@ yarn-error.log*
 *.spec.js
 *.spec.ts
 
-# Documentation
-README.md
+# Documentation (optional, can be excluded to reduce upload size)
 *.md
+!DEPLOYMENT.md
 
-# Development files
-tsconfig.json
-vite.config.ts
-tailwind.config.js
-postcss.config.js
-
-# Source files that are only needed for development
-generate.js
-build-browser.js
-copy-to-public.js
-cfdg-parser-template.js
+# Demo/example HTML files (not needed for production)
 index.html
-editor/index.html
+
