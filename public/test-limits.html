@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Renderer Limits</title>
+</head>
+<body>
+    <h1>Testing Renderer Limits</h1>
+    <div id="results"></div>
+    <canvas id="canvas1" width="500" height="500"></canvas>
+    
+    <script src="public/contextfree.js"></script>
+    <script src="public/cfdg.js"></script>
+    <script>
+        const results = document.getElementById('results');
+        
+        // Test 1: Shape limit (should stop at 20000 shapes by default)
+        console.log('Test 1: Shape limit test');
+        const cfdg1 = `
+            background { b 1 }
+            startshape test
+            rule test {
+                CIRCLE { }
+                test { s 0.99 r 1 x 0.01 }
+            }
+        `;
+        
+        const canvas1 = document.getElementById('canvas1');
+        try {
+            const cf1 = new ContextFree(cfdg1, canvas1);
+            const start = Date.now();
+            cf1.render(() => {
+                const elapsed = Date.now() - start;
+                console.log('Shape limit test completed in', elapsed, 'ms');
+                console.log('Total shapes generated:', cf1.shapes.length);
+                results.innerHTML += `<p>Test 1 (Shape limit): Completed in ${elapsed}ms with ${cf1.shapes.length} shapes</p>`;
+                
+                // Check if it stopped due to shape limit
+                if (cf1.shapes.length >= 20000) {
+                    results.innerHTML += `<p style="color: green;">✓ Shape limit working (hit 20000 limit)</p>`;
+                } else if (elapsed >= 4900) {
+                    results.innerHTML += `<p style="color: green;">✓ Time limit working (hit 5s timeout)</p>`;
+                } else {
+                    results.innerHTML += `<p style="color: blue;">ℹ Completed normally in ${elapsed}ms with ${cf1.shapes.length} shapes</p>`;
+                }
+            });
+        } catch (e) {
+            console.error('Test 1 failed:', e);
+            results.innerHTML += `<p style="color: red;">✗ Test 1 failed: ${e.message}</p>`;
+        }
+    </script>
+</body>
+</html>

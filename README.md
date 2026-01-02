@@ -85,6 +85,17 @@ Usage
         };
     </script>
 
+### Options
+
+The ContextFree constructor accepts an optional third parameter for configuration:
+
+    var contextfree = new ContextFree(src, canvas, {
+        maxRenderTime: 5000,  // Maximum render time in milliseconds (default: 5000ms)
+        maxShapes: 20000      // Maximum number of shapes to render (default: 20000)
+    });
+
+The renderer will automatically stop if either limit is reached, preventing browser freezes from complex patterns.
+
 License
 -------
 
